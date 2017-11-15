@@ -45,7 +45,7 @@ tp_data <- tp_data[Browser == "firefox_private", Browser := "Firefox Quantum Pri
 
 In our study, we collected [performance.timing](https://developer.mozilla.org/en-US/docs/Web/API/PerformanceTiming) data for 200 news websites that were loaded 10 times each in every browser. Here is a sample of the data as example:
 
-```{r preview}
+```{r preview, message=FALSE, warning=FALSE}
 # create difference between two timestamps
 # we are interested in the difference between each of the timestamps and navigationStart
 perf_timings <- tp_data %>% 
@@ -71,7 +71,11 @@ by_browser <- perf_timings %>%
   group_by(Browser) %>% 
   summarize(means = mean(loadEventEnd))
   
-ggplot(by_browser, aes(Browser, means)) + geom_bar(stat = "identity", width = 0.5) + scale_fill_manual(values=cbPalette)
+ggplot(by_browser, aes(Browser, means)) +
+  geom_bar(stat = "identity", width = 0.5) +
+  scale_fill_manual(values=cbPalette) +
+  theme_classic() +
+  labs(y = "Average page load time per browser in ms")
 
 ```
 
@@ -103,13 +107,19 @@ for (x in 1:10000) {
 We can then look at the results of the bootstrapping per browser.
 
 ```{r bs_browser}
-ggplot(bootstrap, aes(means, fill=Browser)) + geom_histogram(position="identity", alpha = 0.7, binwidth = 100) + scale_fill_manual(values=cbPalette)
+ggplot(bootstrap, aes(means, fill=Browser)) +
+  geom_histogram(position="identity", alpha = 0.7, binwidth = 100) + 
+  scale_fill_manual(values=cbPalette) +
+  theme_classic() +
+  labs(y = "Number of occurrence", x = "Average page load time", fill = "Browser")
 ```
 
 More interestingly, we can also plot the distributions of the difference between Chrome and Firefox Quantum.
 
 ```{r dist_browser}
-qplot(distance, geom = "histogram", binwidth = 0.05)
+qplot(distance, geom = "histogram", binwidth = 0.05) +
+  theme_classic() +
+  labs(y = "Number of occurrence", x = "Difference in average page load time between Chrome and Firefox Quantum")
 ```
 
 To proof stability of our measurements, we can calculate the mean of this difference distribution again which gives us **`r round(mean(distance),1)`x** as mean difference of differences between Chrome Incognito and Firefox Quantum Private Browsing.
@@ -137,7 +147,7 @@ ggplot(long_loading, aes(x = Browser, y = perc, fill = page_load_time, label = p
   scale_y_continuous(labels=percent) + 
   theme_classic() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-  labs(y = "Percentages of pages loaded", color = "Page load time", fill = "Page load time") + 
+  labs(y = "Share of pages loaded in %", color = "Page load time", fill = "Page load time") + 
   scale_fill_manual(values=cbPalette) +
   geom_text(size = 3, position = position_fill(vjust = 0.5))
 ```
