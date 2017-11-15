@@ -34,7 +34,7 @@ library(data.table, warn.conflicts = FALSE)
 cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 
 # read data from results csv file. Reading timestamps as character to keep it readible.
-tp_data <- fread("disconnect-mozilla-speed-report_updated.csv", colClasses = list(character=3:25))
+tp_data <- fread("pageloadstudy.csv", colClasses = list(character=3:25))
 
 # replace strings for different Browsers
 tp_data <- tp_data[Browser == "chrome_normal", Browser := "Chrome"]
